@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>by.Adhamovich's — Учебные презентации</title>
+    <style>
+        :root {
+            --primary-color: #FFD700;
+            --primary-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --text-color: #FFFFFF;
+            --text-muted: #AAAAAA;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+
+        h1, .app-title {
+            text-align: center;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        select, input {
+            background-color: #2A2A2A;
+            border: 2px solid #333;
+            color: var(--text-color);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        button.create-btn {
+            background: var(--primary-gradient) !important;
+            color: #121212 !important;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        button.create-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Стили для счетчика посещений */
+        .visitor-counter {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .visitor-counter img {
+            vertical-align: middle;
+            opacity: 0.8;
+            border-radius: 4px;
+        }
+
+        /* Стили для сгенерированных слайдов */
+        .slide {
+            background: var(--card-bg);
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .slide-footer {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app-container">
+        <h1 id="main-title">by.Adhamovich's</h1>
+        <div class="subtitle" id="main-subtitle">Учебные презентации</div>
+
+        <div class="form-group">
+            <label id="lbl-lang">Язык презентации / Til / Language:</label>
+            <select id="langSelect">
+                <option value="ru">Русский</option>
+                <option value="uz">O'zbekcha</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-subject">Выберите предмет:</label>
+            <select id="subjectSelect">
+                <option value="chemistry">🧪 Химия</option>
+                <option value="physics">⚡ Физика</option>
+                <option value="history">📜 История</option>
+                <option value="biology">🧬 Биология</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-topic">Введите тему презентации:</label>
+            <input type="text" id="topicInput" placeholder="Например: Состав атома, Вторая мировая">
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-count">Количество слайдов (до 20):</label>
+            <input type="number" id="countInput" value="6" min="1" max="20">
+        </div>
+
+        <button class="create-btn" id="createBtn" onclick="generatePresentation()">Создать презентацию</button>
+
+        <!-- Блок счетчика посещений -->
+        <div class="visitor-counter">
+            Просмотров приложения: <a href="https://www.freecounterstat.com" target="_blank"><img src="https://www.freecounterstat.com/counter.php?pagetype=ssid&id=YOUR_COUNTER_ID" border="0" alt="счетчик посещений"></a>
+        </div>
+    </div>
+
+    <div id="resultContainer" style="width: 100%; max-width: 450px; margin-top: 20px;"></div>
+
+    <script>
+        const translations = {
+            ru: { title: "Учебные презентации", btn: "Создать презентацию", subject: "Выберите предмет:", topic: "Введите тему презентации:", count: "Количество слайдов (до 20):", lang: "Язык презентации:" },
+            uz: { title: "O'quv taqdimotlari", btn: "Taqdimot yaratish", subject: "Fanini tanlang:", topic: "Mavzuni kiriting:", count: "Slaydlar soni (20 gacha):", lang: "Taqdimot tili:" },
+            en: { title: "Educational Presentations", btn: "Create Presentation", subject: "Select Subject:", topic: "Enter Presentation Topic:", count: "Number of slides (up to 20):", lang: "Presentation Language:" }
+        };
+
+        document.getElementById('langSelect').addEventListener('change', (e) => {
+            const t = translations[e.target.value];
+            document.getElementById('main-subtitle').innerText = t.title;
+            document.getElementById('createBtn').innerText = t.btn;
+            document.getElementById('lbl-subject').innerText = t.subject;
+            document.getElementById('lbl-topic').innerText = t.topic;
+            document.getElementById('lbl-count').innerText = t.count;
+            document.getElementById('lbl-lang').innerText = t.lang;
+        });
+
+        function generatePresentation() {
+            const topic = document.getElementById('topicInput').value.trim() || "Общая тема";
+            const count = parseInt(document.getElementById('countInput').value) || 3;
+            const resultDiv = document.getElementById('resultContainer');
+            
+            let html = `<h2>Презентация: ${topic}</h2>`;
+            
+            for (let i = 1; i <= Math.min(count, 20); i++) {
+                html += `
+                    <div class="slide">
+                        <h3>Слайд ${i}: Ключевые аспекты темы</h3>
+                        <p>1. Фундаментальные основы и общие принципы изучения объекта.</p>
+                        <p>2. Практическое значение, ключевые характеристики и особенности.</p>
+                        <p>3. Современные подходы, выводы и общая систематизация данных.</p>
+                        <div class="slide-footer">сделано by.Adhamovich's</div>
+                    </div>
+                `;
+            }
+            resultDiv.innerHTML = html;
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
